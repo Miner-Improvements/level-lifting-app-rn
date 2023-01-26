@@ -2,12 +2,14 @@ import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { Appbar, Menu } from "react-native-paper";
 import AppbarAction from "react-native-paper/lib/typescript/components/Appbar/AppbarAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setTheme } from "../reducers/themeReducer";
 import { addWorkout, setWorkouts } from "../reducers/workoutsReducer";
+import { RootState } from "../store";
 
 const CustomNavigationBar = ({ navigation, back }: NativeStackHeaderProps) => {
   const [visible, setVisible] = useState(false);
-
+  const theme = useSelector((state: RootState) => state.theme);
   const dispatch = useDispatch();
 
   const handlePress = () => {
@@ -40,6 +42,16 @@ const CustomNavigationBar = ({ navigation, back }: NativeStackHeaderProps) => {
         }
       />
       <Appbar.Action icon="delete" onPress={() => dispatch(setWorkouts([]))} />
+      <Appbar.Action
+        icon={
+          theme.themeType === "light"
+            ? "white-balance-sunny"
+            : "moon-waning-crescent"
+        }
+        onPress={() =>
+          dispatch(setTheme(theme.themeType === "light" ? "dark" : "light"))
+        }
+      />
     </Appbar.Header>
   );
 };

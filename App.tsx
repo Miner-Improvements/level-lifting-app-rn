@@ -21,29 +21,35 @@ type RootStackParamList = {
 };
 export type NavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
-export default function App() {
+const UI = () => {
+  const theme = useSelector((state: RootState) => state.theme);
   const Stack = createNativeStackNavigator();
+  return (
+    <PaperProvider theme={theme.theme}>
+      <NavigationContainer theme={theme.theme}>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            header: (props) => <CustomNavigationBar {...props} />,
+          }}
+        >
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="Workout"
+            component={WorkoutScreen}
+            options={{ animation: "slide_from_right", title: "Workout" }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
+  );
+};
 
+export default function App() {
   return (
     <StoreProvider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <PaperProvider theme={CombinedDarkTheme}>
-          <NavigationContainer theme={CombinedDarkTheme}>
-            <Stack.Navigator
-              initialRouteName="Home"
-              screenOptions={{
-                header: (props) => <CustomNavigationBar {...props} />,
-              }}
-            >
-              <Stack.Screen name="Home" component={HomeScreen} />
-              <Stack.Screen
-                name="Workout"
-                component={WorkoutScreen}
-                options={{ animation: "slide_from_right", title: "Workout" }}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </PaperProvider>
+        <UI />
       </PersistGate>
     </StoreProvider>
   );

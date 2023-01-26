@@ -31,10 +31,12 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProps }) => {
     <View style={{ width: "100%" }}>
       <FlatList
         ListHeaderComponent={<DeviceCard />}
+        contentContainerStyle={{ paddingBottom: "10%" }}
         data={workouts}
-        renderItem={({ item }) =>
-          WorkoutCard({ navigation: navigation, workout: item })
-        }
+        style={{ height: "100%" }}
+        renderItem={({ item }) => (
+          <WorkoutCard navigation={navigation} workout={item} />
+        )}
       />
       <BluetoothModal />
     </View>

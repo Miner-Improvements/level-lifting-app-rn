@@ -1,13 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { CombinedDarkTheme, CombinedDefaultTheme } from "../themes";
 
-type Theme = "light" | "dark";
+type ThemeType = "light" | "dark";
+export interface ThemeData {
+  themeType: ThemeType;
+  theme: any;
+}
 
 const themeSlice = createSlice({
   name: "theme",
-  initialState: "light" as Theme,
+  initialState: { themeType: "light", theme: CombinedDefaultTheme },
   reducers: {
-    setTheme(state, action: PayloadAction<Theme>) {
-      return action.payload;
+    setTheme(state, action: PayloadAction<ThemeType>) {
+      return {
+        themeType: action.payload,
+        theme:
+          action.payload === "light" ? CombinedDefaultTheme : CombinedDarkTheme,
+      };
     },
   },
 });
