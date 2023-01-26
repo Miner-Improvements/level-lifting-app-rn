@@ -1,2 +1,1 @@
-# Level Lifting App
-## Built With React Native
+# Level Lifting App - Built With React Native
