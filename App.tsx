@@ -28,7 +28,7 @@ const UI = () => {
   return (
     <PaperProvider theme={theme.theme}>
       <NavigationContainer theme={theme.theme}>
-        <StatusBar style="auto" />
+        <StatusBar style={theme.themeType === "dark" ? "light" : "dark"} />
         <Stack.Navigator
           initialRouteName="Home"
           screenOptions={{
