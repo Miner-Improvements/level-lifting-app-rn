@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CombinedDarkTheme, CombinedDefaultTheme } from "../themes";
+import { Appearance } from "react-native";
 
 type ThemeType = "light" | "dark";
 export interface ThemeData {
@@ -9,7 +10,10 @@ export interface ThemeData {
 
 const themeSlice = createSlice({
   name: "theme",
-  initialState: { themeType: "light", theme: CombinedDefaultTheme },
+  initialState: {
+    themeType: Appearance.getColorScheme(),
+    theme: CombinedDefaultTheme,
+  },
   reducers: {
     setTheme(state, action: PayloadAction<ThemeType>) {
       return {

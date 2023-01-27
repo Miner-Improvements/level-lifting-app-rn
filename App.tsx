@@ -14,6 +14,7 @@ import { CombinedDarkTheme, CombinedDefaultTheme } from "./themes";
 import CustomNavigationBar from "./components/CustomNavBar";
 import WorkoutScreen from "./screens/WorkoutScreen";
 import { WorkoutData } from "./reducers/workoutsReducer";
+import { StatusBar } from "expo-status-bar";
 
 type RootStackParamList = {
   Home: undefined;
@@ -27,6 +28,7 @@ const UI = () => {
   return (
     <PaperProvider theme={theme.theme}>
       <NavigationContainer theme={theme.theme}>
+        <StatusBar style="auto" />
         <Stack.Navigator
           initialRouteName="Home"
           screenOptions={{
