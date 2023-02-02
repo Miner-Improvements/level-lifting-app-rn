@@ -1,6 +1,9 @@
-import { View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, View } from "react-native";
+import { BleError, Characteristic } from "react-native-ble-plx";
 import { Button, Card, IconButton, Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
+import { CHARACTERISTIC_ID, SERVICE_ID } from "../BLEManager";
 import { setBluetoothModalShown } from "../reducers/bluetoothModalShownReducer";
 import { RootState } from "../store";
 
@@ -9,6 +12,23 @@ const DeviceCard = () => {
   const bluetoothModalShown = useSelector(
     (state: RootState) => state.bluetoothModalShown
   );
+  const bluetoothConnection = useSelector(
+    (state: RootState) => state.bluetoothConnection
+  );
+  const [characteristics, setCharacteristics] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (bluetoothConnection.connected) {
+      bluetoothConnection
+        .device!.readCharacteristicForService(SERVICE_ID, CHARACTERISTIC_ID)
+        .then((value) => {
+          setCharacteristics([...characteristics, value.value!]);
+        })
+        .catch((error: BleError) => {
+          Alert.alert(error.message, JSON.stringify(error));
+        });
+    }
+  }, [bluetoothConnection.connected]);
 
   return (
     <Card mode="elevated" elevation={1} style={{ margin: 10 }}>
@@ -48,13 +68,17 @@ const DeviceCard = () => {
           />
         </View>
       </View>
-      <Button
-        style={{ margin: 10 }}
-        mode="contained"
-        onPress={() => dispatch(setBluetoothModalShown(true))}
-      >
-        Connect
-      </Button>
+      {!bluetoothConnection.connected ? (
+        <Button
+          style={{ margin: 10 }}
+          mode="contained"
+          onPress={() => dispatch(setBluetoothModalShown(true))}
+        >
+          Connect
+        </Button>
+      ) : (
+        <Text>{JSON.stringify(characteristics)}</Text>
+      )}
     </Card>
   );
 };

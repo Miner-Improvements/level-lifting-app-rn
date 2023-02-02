@@ -15,6 +15,10 @@ import CustomNavigationBar from "./components/CustomNavBar";
 import WorkoutScreen from "./screens/WorkoutScreen";
 import { WorkoutData } from "./reducers/workoutsReducer";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Subscription } from "react-native-ble-plx";
+import { setConnected } from "./reducers/bluetoothConnectionReducer";
 
 type RootStackParamList = {
   Home: undefined;
@@ -24,6 +28,23 @@ export type NavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
 const UI = () => {
   const theme = useSelector((state: RootState) => state.theme);
+  const bluetoothConnection = useSelector(
+    (state: RootState) => state.bluetoothConnection
+  );
+  let bluetoothConnectionSubscription: Subscription | null = null;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (bluetoothConnection.device !== null && bluetoothConnection.connected) {
+      bluetoothConnectionSubscription =
+        bluetoothConnection.device.onDisconnected(() => {
+          dispatch(setConnected(false));
+        });
+    } else if (bluetoothConnectionSubscription) {
+      bluetoothConnectionSubscription.remove();
+    }
+  }, [bluetoothConnection.device]);
+
   const Stack = createNativeStackNavigator();
   return (
     <PaperProvider theme={theme.theme}>
