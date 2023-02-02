@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CHARACTERISTIC_ID, SERVICE_ID } from "../BLEManager";
 import { setBluetoothModalShown } from "../reducers/bluetoothModalShownReducer";
 import { RootState } from "../store";
+import { Buffer } from "buffer";
 
 const DeviceCard = () => {
   const dispatch = useDispatch();
@@ -19,14 +20,24 @@ const DeviceCard = () => {
 
   useEffect(() => {
     if (bluetoothConnection.connected) {
-      bluetoothConnection
-        .device!.readCharacteristicForService(SERVICE_ID, CHARACTERISTIC_ID)
-        .then((value) => {
-          setCharacteristics([...characteristics, value.value!]);
-        })
-        .catch((error: BleError) => {
-          Alert.alert(error.message, JSON.stringify(error));
-        });
+      bluetoothConnection.device!.monitorCharacteristicForService(
+        SERVICE_ID,
+        CHARACTERISTIC_ID,
+        (error, device) => {
+          if (error) {
+            Alert.alert(error.message, JSON.stringify(error));
+            return;
+          }
+          setCharacteristics(
+            characteristics.concat(characteristics, [
+              Buffer.from(device!.value!, "base64").toString(),
+            ])
+          );
+        }
+      );
+      // .catch((error: BleError) => {
+      //
+      // });
     }
   }, [bluetoothConnection.connected]);
 
