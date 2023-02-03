@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, View } from "react-native";
 import { BleError, Characteristic } from "react-native-ble-plx";
 import { Button, Card, IconButton, Text } from "react-native-paper";
@@ -17,6 +17,7 @@ const DeviceCard = () => {
     (state: RootState) => state.bluetoothConnection
   );
   const [characteristics, setCharacteristics] = useState<string[]>([]);
+  const characteristic_values = useRef<string[]>([""]);
 
   useEffect(() => {
     if (bluetoothConnection.connected) {
@@ -28,11 +29,16 @@ const DeviceCard = () => {
             Alert.alert(error.message, JSON.stringify(error));
             return;
           }
-          setCharacteristics(
-            characteristics.concat(characteristics, [
-              Buffer.from(device!.value!, "base64").toString(),
-            ])
+          characteristic_values.current.push(
+            Buffer.from(device!.value!, "base64").toString()
           );
+
+          if (characteristic_values.current.length === 1000) {
+            Alert.alert(
+              "Recieved thousanth value:",
+              JSON.stringify(characteristic_values)
+            );
+          }
         }
       );
       // .catch((error: BleError) => {
