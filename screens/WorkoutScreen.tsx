@@ -1,7 +1,9 @@
 import { View } from "react-native";
 import { Text } from "react-native-paper";
+import WebView from "react-native-webview";
 import GraphCard from "../components/GraphCard";
 import StatsCard from "../components/StatsCard";
+import WorkoutCard from "../components/WorkoutCard";
 
 const WorkoutString = ({ route }: any) => {
   const workoutDate = new Date(route.params.workout.date);
@@ -21,7 +23,7 @@ const WorkoutString = ({ route }: any) => {
   ];
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           justifyContent: "center",

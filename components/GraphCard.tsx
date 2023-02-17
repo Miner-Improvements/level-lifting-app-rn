@@ -1,9 +1,6 @@
 import { Data } from "plotly.js";
 import { Card, Text } from "react-native-paper";
-import Plotly from "plotly.js-basic-dist-min";
-import createPlotlyComponent from "react-plotly.js/factory";
-
-const Plot = createPlotlyComponent(Plotly);
+import Plotly from "react-native-plotly";
 
 function randomValues(num: number, mul: number) {
   const arr = [];
@@ -21,25 +18,21 @@ const GraphCard = () => {
     .map((_, i) => {
       const { index, arr } = randomValues(20, 3);
       return {
-        x: Array(20).fill(i),
-        y: index,
+        x: randomValues(20, 3).arr,
+        y: randomValues(20, 3).arr,
         z: arr,
         type: "scatter3d",
-        mode: "lines",
+        mode: "markers",
       };
     });
 
   return (
-    <Card style={{ height: 350, margin: 10 }} mode="elevated" elevation={2}>
-      <Plot
-        data={traces}
-        layout={{
-          width: 900,
-          height: 800,
-          title: `Simple 3D Scatter`,
-        }}
-      />
-    </Card>
+    <Plotly
+      data={traces}
+      layout={{
+        title: `Simple 3D Scatter`,
+      }}
+    />
   );
 };
 
