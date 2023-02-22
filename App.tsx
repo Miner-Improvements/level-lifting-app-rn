@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Subscription } from "react-native-ble-plx";
 import { setConnected } from "./reducers/bluetoothConnectionReducer";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 type RootStackParamList = {
   Home: undefined;

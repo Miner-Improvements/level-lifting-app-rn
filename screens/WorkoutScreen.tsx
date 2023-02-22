@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import WebView from "react-native-webview";
 import GraphCard from "../components/GraphCard";
@@ -23,7 +24,7 @@ const WorkoutString = ({ route }: any) => {
   ];
 
   return (
-    <View style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <View
         style={{
           justifyContent: "center",
@@ -39,7 +40,7 @@ const WorkoutString = ({ route }: any) => {
       </View>
       <StatsCard workout={route.params.workout} />
       <GraphCard />
-    </View>
+    </GestureHandlerRootView>
   );
 };
 
