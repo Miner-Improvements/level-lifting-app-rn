@@ -30,7 +30,7 @@ const DeviceCard = () => {
     (state: RootState) => state.bluetoothConnection
   );
   const [characteristics, setCharacteristics] = useState<string[]>([]);
-  const characteristic_values = useRef<Accelerometer_Data[]>([]);
+  const characteristic_values = useRef<Accelerometer_Data[]>([{}]);
 
   useEffect(() => {
     if (bluetoothConnection.connected) {
