@@ -188,7 +188,7 @@ const DeviceCard = () => {
           Connect
         </Button>
       ) : (
-        <Text>{JSON.stringify(characteristics)}</Text>
+        <Text>{JSON.stringify(characteristic_values)}</Text>
       )}
     </Card>
   );
