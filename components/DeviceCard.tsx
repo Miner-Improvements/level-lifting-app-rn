@@ -17,10 +17,16 @@ import { RootState } from "../store";
 import { Buffer } from "buffer";
 
 export interface Accelerometer_Data {
+  x_acc: number;
+  y_acc: number;
+  z_acc: number;
+  x_vel: number;
+  y_vel: number;
+  z_vel: number;
   x: number;
   y: number;
   z: number;
-  time: BigInt;
+  time: bigint;
 }
 
 const DeviceCard = () => {
@@ -33,6 +39,38 @@ const DeviceCard = () => {
   );
   const [characteristics, setCharacteristics] = useState<string[]>([]);
   const characteristic_values = useRef<Accelerometer_Data[]>([]);
+
+  const getVelocities = (time: bigint) => {
+    if (characteristic_values.current.length == 0) return [0, 0, 0];
+    else {
+      const last_vals =
+        characteristic_values.current[characteristic_values.current.length - 1];
+      return [
+        last_vals.x_vel + last_vals.x_acc * Number(time - last_vals.time),
+        last_vals.y_vel + last_vals.y_acc * Number(time - last_vals.time),
+        last_vals.z_vel + last_vals.z_acc * Number(time - last_vals.time),
+      ];
+    }
+  };
+
+  const getPositions = (time: bigint) => {
+    if (characteristic_values.current.length == 0) return [0, 0, 0];
+    else {
+      const last_vals =
+        characteristic_values.current[characteristic_values.current.length - 1];
+      return [
+        last_vals.x +
+          last_vals.x_vel * Number(time - last_vals.time) +
+          last_vals.x_acc * Math.pow(Number(time - last_vals.time), 2),
+        last_vals.y +
+          last_vals.y_vel * Number(time - last_vals.time) +
+          last_vals.y_acc * Math.pow(Number(time - last_vals.time), 2),
+        last_vals.z +
+          last_vals.z_vel * Number(time - last_vals.time) +
+          last_vals.z_acc * Math.pow(Number(time - last_vals.time), 2),
+      ];
+    }
+  };
 
   // useEffect(() => {
   //   if (bluetoothConnection.connected) {
@@ -154,17 +192,17 @@ const DeviceCard = () => {
             return;
           }
 
-          characteristic_values.current.push({
-            x: Buffer.from(
-              (
-                await bluetoothConnection.device!.readCharacteristicForService(
-                  SERVICE_UUID_IMU,
-                  CHARACTERISTIC_UUID_X_ACCEL
-                )
-              ).value!,
-              "base64"
-            ).readFloatBE(),
-            y: Buffer.from(
+          const x_acc = Buffer.from(
+            (
+              await bluetoothConnection.device!.readCharacteristicForService(
+                SERVICE_UUID_IMU,
+                CHARACTERISTIC_UUID_X_ACCEL
+              )
+            ).value!,
+            "base64"
+          ).readFloatBE();
+          const y_acc =
+            Buffer.from(
               (
                 await bluetoothConnection.device!.readCharacteristicForService(
                   SERVICE_UUID_IMU,
@@ -172,25 +210,31 @@ const DeviceCard = () => {
                 )
               ).value!,
               "base64"
-            ).readFloatBE(),
-            z: Buffer.from(
-              (
-                await bluetoothConnection.device!.readCharacteristicForService(
-                  SERVICE_UUID_IMU,
-                  CHARACTERISTIC_UUID_Z_ACCEL
-                )
-              ).value!,
-              "base64"
-            ).readFloatBE(),
-            time: Buffer.from(
-              (
-                await bluetoothConnection.device!.readCharacteristicForService(
-                  SERVICE_UUID_IMU,
-                  CHARACTERISTIC_UUID_TIME
-                )
-              ).value!,
-              "base64"
-            ).readBigUint64BE(),
+            ).readFloatBE() + 9.8; //cancel gravity
+          const z_acc = Buffer.from(
+            (
+              await bluetoothConnection.device!.readCharacteristicForService(
+                SERVICE_UUID_IMU,
+                CHARACTERISTIC_UUID_Z_ACCEL
+              )
+            ).value!,
+            "base64"
+          ).readFloatBE();
+          const time = Buffer.from(device!.value!, "base64").readBigUint64BE();
+
+          const vels = getVelocities(time);
+          const posis = getPositions(time);
+          characteristic_values.current.push({
+            x_acc: x_acc,
+            y_acc: y_acc,
+            z_acc: z_acc,
+            x_vel: vels[0],
+            y_vel: vels[1],
+            z_vel: vels[2],
+            x: posis[0],
+            y: posis[1],
+            z: posis[2],
+            time: time,
           });
 
           if (characteristic_values.current.length === 101) {
