@@ -5,6 +5,7 @@ import { Button, Card, IconButton, Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import {
   CHARACTERISTIC_ID,
+  CHARACTERISTIC_UUID_TIME,
   CHARACTERISTIC_UUID_X_ACCEL,
   CHARACTERISTIC_UUID_Y_ACCEL,
   CHARACTERISTIC_UUID_Z_ACCEL,
@@ -16,9 +17,10 @@ import { RootState } from "../store";
 import { Buffer } from "buffer";
 
 export interface Accelerometer_Data {
-  x?: number;
-  y?: number;
-  // z?: number;
+  x: number;
+  y: number;
+  z: number;
+  time: BigInt;
 }
 
 const DeviceCard = () => {
@@ -30,37 +32,166 @@ const DeviceCard = () => {
     (state: RootState) => state.bluetoothConnection
   );
   const [characteristics, setCharacteristics] = useState<string[]>([]);
-  const characteristic_values = useRef<Accelerometer_Data[]>([{}]);
+  const characteristic_values = useRef<Accelerometer_Data[]>([]);
+
+  // useEffect(() => {
+  //   if (bluetoothConnection.connected) {
+  //     bluetoothConnection.device!.readCharacteristicForService(
+  //       SERVICE_UUID_IMU,
+  //       CHARACTERISTIC_UUID_X_ACCEL,
+  //       (error, device) => {
+  //         if (error) {
+  //           Alert.alert(error.message, JSON.stringify(error));
+  //           return;
+  //         }
+  //         if (
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].x &&
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].y &&
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].z
+  //         ) {
+  //           characteristic_values.current.push({
+  //             x: Buffer.from(device!.value!, "base64").readFloatBE(),
+  //           });
+  //         } else {
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].x = Buffer.from(device!.value!, "base64").readFloatBE();
+  //         }
+
+  //         if (characteristic_values.current.length === 101) {
+  //           characteristic_values.current.shift();
+  //         }
+  //       }
+  //     );
+  //     // .catch((error: BleError) => {
+  //     //
+  //     // });
+
+  //     bluetoothConnection.device!.monitorCharacteristicForService(
+  //       SERVICE_UUID_IMU,
+  //       CHARACTERISTIC_UUID_Y_ACCEL,
+  //       (error, device) => {
+  //         if (error) {
+  //           Alert.alert(error.message, JSON.stringify(error));
+  //           return;
+  //         }
+  //         if (
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].x &&
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].y &&
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].z
+  //         ) {
+  //           characteristic_values.current.push({
+  //             y: Buffer.from(device!.value!, "base64").readFloatBE(),
+  //           });
+  //         } else {
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].y = Buffer.from(device!.value!, "base64").readFloatBE();
+  //         }
+
+  //         if (characteristic_values.current.length === 101) {
+  //           characteristic_values.current.shift();
+  //         }
+  //       }
+  //     );
+
+  //     bluetoothConnection.device!.monitorCharacteristicForService(
+  //       SERVICE_UUID_IMU,
+  //       CHARACTERISTIC_UUID_Z_ACCEL,
+  //       (error, device) => {
+  //         if (error) {
+  //           Alert.alert(error.message, JSON.stringify(error));
+  //           return;
+  //         }
+  //         if (
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].x &&
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].y &&
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].z
+  //         ) {
+  //           characteristic_values.current.push({
+  //             z: Buffer.from(device!.value!, "base64").readFloatBE(),
+  //           });
+  //         } else {
+  //           characteristic_values.current[
+  //             characteristic_values.current.length - 1
+  //           ].z = Buffer.from(device!.value!, "base64").readFloatBE();
+  //         }
+
+  //         if (characteristic_values.current.length === 101) {
+  //           characteristic_values.current.shift();
+  //         }
+  //       }
+  //     );
+  //   }
+  // }, [bluetoothConnection.connected]);
 
   useEffect(() => {
     if (bluetoothConnection.connected) {
       bluetoothConnection.device!.monitorCharacteristicForService(
         SERVICE_UUID_IMU,
-        CHARACTERISTIC_UUID_X_ACCEL,
-        (error, device) => {
+        CHARACTERISTIC_UUID_TIME,
+        async (error, device) => {
           if (error) {
             Alert.alert(error.message, JSON.stringify(error));
             return;
           }
-          if (
-            characteristic_values.current[
-              characteristic_values.current.length - 1
-            ].x &&
-            characteristic_values.current[
-              characteristic_values.current.length - 1
-            ].y /*&&
-            characteristic_values.current[
-              characteristic_values.current.length - 1
-            ].z*/
-          ) {
-            characteristic_values.current.push({
-              x: Buffer.from(device!.value!, "base64").readFloatBE(),
-            });
-          } else {
-            characteristic_values.current[
-              characteristic_values.current.length - 1
-            ].x = Buffer.from(device!.value!, "base64").readFloatBE();
-          }
+
+          characteristic_values.current.push({
+            x: Buffer.from(
+              (
+                await bluetoothConnection.device!.readCharacteristicForService(
+                  SERVICE_UUID_IMU,
+                  CHARACTERISTIC_UUID_X_ACCEL
+                )
+              ).value!,
+              "base64"
+            ).readFloatBE(),
+            y: Buffer.from(
+              (
+                await bluetoothConnection.device!.readCharacteristicForService(
+                  SERVICE_UUID_IMU,
+                  CHARACTERISTIC_UUID_Y_ACCEL
+                )
+              ).value!,
+              "base64"
+            ).readFloatBE(),
+            z: Buffer.from(
+              (
+                await bluetoothConnection.device!.readCharacteristicForService(
+                  SERVICE_UUID_IMU,
+                  CHARACTERISTIC_UUID_Z_ACCEL
+                )
+              ).value!,
+              "base64"
+            ).readFloatBE(),
+            time: Buffer.from(
+              (
+                await bluetoothConnection.device!.readCharacteristicForService(
+                  SERVICE_UUID_IMU,
+                  CHARACTERISTIC_UUID_TIME
+                )
+              ).value!,
+              "base64"
+            ).readBigUint64BE(),
+          });
 
           if (characteristic_values.current.length === 101) {
             characteristic_values.current.shift();
@@ -70,74 +201,6 @@ const DeviceCard = () => {
       // .catch((error: BleError) => {
       //
       // });
-
-      bluetoothConnection.device!.monitorCharacteristicForService(
-        SERVICE_UUID_IMU,
-        CHARACTERISTIC_UUID_Y_ACCEL,
-        (error, device) => {
-          if (error) {
-            Alert.alert(error.message, JSON.stringify(error));
-            return;
-          }
-          if (
-            characteristic_values.current[
-              characteristic_values.current.length - 1
-            ].x &&
-            characteristic_values.current[
-              characteristic_values.current.length - 1
-            ].y /*&&
-            characteristic_values.current[
-              characteristic_values.current.length - 1
-            ].z*/
-          ) {
-            characteristic_values.current.push({
-              y: Buffer.from(device!.value!, "base64").readFloatBE(),
-            });
-          } else {
-            characteristic_values.current[
-              characteristic_values.current.length - 1
-            ].y = Buffer.from(device!.value!, "base64").readFloatBE();
-          }
-
-          if (characteristic_values.current.length === 101) {
-            characteristic_values.current.shift();
-          }
-        }
-      );
-
-      // bluetoothConnection.device!.monitorCharacteristicForService(
-      //   SERVICE_UUID_IMU,
-      //   CHARACTERISTIC_UUID_Z_ACCEL,
-      //   (error, device) => {
-      //     if (error) {
-      //       Alert.alert(error.message, JSON.stringify(error));
-      //       return;
-      //     }
-      //     if (
-      //       characteristic_values.current[
-      //         characteristic_values.current.length - 1
-      //       ].x &&
-      //       characteristic_values.current[
-      //         characteristic_values.current.length - 1
-      //       ].y &&
-      //       characteristic_values.current[
-      //         characteristic_values.current.length - 1
-      //       ].z
-      //     ) {
-      //       characteristic_values.current.push({
-      //         z: Buffer.from(device!.value!, "base64").readFloatBE(),
-      //       });
-      //     } else {
-      //       characteristic_values.current[
-      //         characteristic_values.current.length - 1
-      //       ].z = Buffer.from(device!.value!, "base64").readFloatBE();
-      //     }
-
-      //     if (characteristic_values.current.length === 101) {
-      //       characteristic_values.current.shift();
-      //     }
-      //   }
-      // );
     }
   }, [bluetoothConnection.connected]);
 

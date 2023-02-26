@@ -20,13 +20,14 @@ import { useRef } from "react";
 
 const GraphCard = () => {
   const boom = useRef<Group>(new Group());
+  let camera = useRef<PerspectiveCamera>();
   const GRID_SIZE = 10;
 
   /************GRAPH RENDERING***************/
 
   const onContextCreate = async (gl: any) => {
     const scene = new Scene();
-    const camera = new PerspectiveCamera(
+    camera.current = new PerspectiveCamera(
       75,
       gl.drawingBufferWidth / gl.drawingBufferHeight,
       0.1,
@@ -38,46 +39,54 @@ const GraphCard = () => {
     };
 
     // set camera position away from cube
-    camera.position.z = 2;
+    camera.current.position.z = 2;
 
     const renderer = new Renderer({ gl });
     // set size of buffer to be equal to drawing buffer width
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
 
-    boom.current.add(camera);
+    boom.current.add(camera.current);
     scene.add(boom.current);
-    camera.position.set(GRID_SIZE / 2, GRID_SIZE / 2, GRID_SIZE); // this sets the boom's length
-    camera.lookAt(GRID_SIZE / 2, GRID_SIZE / 2, 0); // camera looks at the boom's zero
+    boom.current.position.set(GRID_SIZE / 2, GRID_SIZE / 2, 0); // this sets the boom's length
+    camera.current.position.set(0, 0, GRID_SIZE); // this sets the boom's length
+    camera.current.lookAt(GRID_SIZE / 2, GRID_SIZE / 2, 0); // camera looks at the boom's zero
 
     // create cube
     // define geometry
-    const geometry = new SphereGeometry(0.5);
+    const geometry = new SphereGeometry(0.2);
     const material = new MeshBasicMaterial({
       color: "cyan",
     });
 
-    const sphere = new Mesh(geometry, material);
-    const sphere1 = new Mesh(geometry, material);
-    const sphere2 = new Mesh(geometry, material);
-    const sphere3 = new Mesh(geometry, material);
-    const sphere4 = new Mesh(geometry, material);
     const grid_xz = new GridHelper(GRID_SIZE, GRID_SIZE);
     const grid_xy = new GridHelper(GRID_SIZE, GRID_SIZE);
     const grid_yz = new GridHelper(GRID_SIZE, GRID_SIZE);
     // add cube to scene
-    scene.add(sphere);
-    scene.add(sphere1);
-    scene.add(sphere2);
-    scene.add(sphere3);
-    scene.add(sphere4);
+
     scene.add(grid_xz);
     scene.add(grid_xy);
     scene.add(grid_yz);
 
-    sphere1.position.x += 1;
-    sphere2.position.x += 2;
-    sphere3.position.x += 3;
-    sphere4.position.x += 4;
+    const spheres = [];
+    for (let i = 0; i < 20; i++) {
+      spheres.push(new Mesh(geometry, material));
+      spheres[i].position.y = 10 - i * 0.5;
+      spheres[i].position.x = Math.pow((spheres[i].position.y - 5) / -3, 1 / 3);
+      spheres[i].position.z = 2.5;
+      scene.add(spheres[i]);
+    }
+
+    const spheres1 = [];
+    for (let i = 0; i < 20; i++) {
+      spheres1.push(new Mesh(geometry, material));
+      spheres1[i].position.y = 10 - i * 0.5;
+      spheres1[i].position.x = Math.pow(
+        (spheres[i].position.y - 5) / -3,
+        1 / 3
+      );
+      spheres1[i].position.z = -2.5;
+      scene.add(spheres1[i]);
+    }
 
     grid_xz.position.x += GRID_SIZE / 2;
     grid_xz.position.y += GRID_SIZE / 2;
@@ -97,7 +106,7 @@ const GraphCard = () => {
       // // rotate around y axis
       // cube.rotation.y += 0.01;
 
-      renderer.render(scene, camera);
+      renderer.render(scene, camera.current!);
       gl.endFrameEXP();
     };
 
@@ -117,9 +126,7 @@ const GraphCard = () => {
     .maxPointers(1);
 
   const pinchGesture = Gesture.Pinch().onChange((e) => {
-    boom.current.position.z *= e.scaleChange * 100 - 100;
-    boom.current.position.x *= e.scaleChange * 100 - 100;
-    boom.current.position.y *= e.scaleChange * 100 - 100;
+    if (camera.current) camera.current.position.z *= 1 / e.scaleChange;
   });
 
   const gestureControls = Gesture.Race(pinchGesture, panGesture);
