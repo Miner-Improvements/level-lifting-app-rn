@@ -37,7 +37,9 @@ const DeviceCard = () => {
   const bluetoothConnection = useSelector(
     (state: RootState) => state.bluetoothConnection
   );
-  const [characteristics, setCharacteristics] = useState<string[]>([]);
+  const [characteristics, setCharacteristics] = useState<Accelerometer_Data[]>(
+    []
+  );
   const characteristic_values = useRef<Accelerometer_Data[]>([]);
 
   const getVelocities = (time: bigint) => {
@@ -240,6 +242,8 @@ const DeviceCard = () => {
           if (characteristic_values.current.length === 101) {
             characteristic_values.current.shift();
           }
+
+          setCharacteristics(characteristic_values.current);
         }
       );
       // .catch((error: BleError) => {
@@ -295,7 +299,7 @@ const DeviceCard = () => {
           Connect
         </Button>
       ) : (
-        <Text>{JSON.stringify(characteristic_values)}</Text>
+        <Text>{JSON.stringify(characteristics)}</Text>
       )}
     </Card>
   );
