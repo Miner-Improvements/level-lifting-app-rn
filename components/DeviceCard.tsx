@@ -203,6 +203,7 @@ const DeviceCard = () => {
             ).value!,
             "base64"
           ).readFloatBE();
+          Alert.alert(x_acc.toString(), JSON.stringify(error));
           const y_acc =
             Buffer.from(
               (
@@ -213,6 +214,7 @@ const DeviceCard = () => {
               ).value!,
               "base64"
             ).readFloatBE() + 9.8; //cancel gravity
+          Alert.alert(y_acc.toString(), JSON.stringify(error));
           const z_acc = Buffer.from(
             (
               await bluetoothConnection.device!.readCharacteristicForService(
@@ -222,8 +224,9 @@ const DeviceCard = () => {
             ).value!,
             "base64"
           ).readFloatBE();
+          Alert.alert(z_acc.toString(), JSON.stringify(error));
           const time = Buffer.from(device!.value!, "base64").readBigUint64BE();
-
+          Alert.alert(time.toString(), JSON.stringify(error));
           const vels = getVelocities(time);
           const posis = getPositions(time);
           characteristic_values.current.push({
