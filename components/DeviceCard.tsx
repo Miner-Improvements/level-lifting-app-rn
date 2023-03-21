@@ -185,6 +185,7 @@ const DeviceCard = () => {
 
   useEffect(() => {
     if (bluetoothConnection.connected) {
+      Alert.alert("BLUETOOTH CONNECTED");
       bluetoothConnection.device!.monitorCharacteristicForService(
         SERVICE_UUID_IMU,
         CHARACTERISTIC_UUID_TIME,
@@ -203,7 +204,7 @@ const DeviceCard = () => {
             ).value!,
             "base64"
           ).readFloatBE();
-          Alert.alert(x_acc.toString(), JSON.stringify(error));
+          Alert.alert(x_acc.toString());
           const y_acc =
             Buffer.from(
               (
@@ -214,7 +215,7 @@ const DeviceCard = () => {
               ).value!,
               "base64"
             ).readFloatBE() + 9.8; //cancel gravity
-          Alert.alert(y_acc.toString(), JSON.stringify(error));
+          Alert.alert(y_acc.toString());
           const z_acc = Buffer.from(
             (
               await bluetoothConnection.device!.readCharacteristicForService(
@@ -224,9 +225,9 @@ const DeviceCard = () => {
             ).value!,
             "base64"
           ).readFloatBE();
-          Alert.alert(z_acc.toString(), JSON.stringify(error));
+          Alert.alert(z_acc.toString());
           const time = Buffer.from(device!.value!, "base64").readBigUint64BE();
-          Alert.alert(time.toString(), JSON.stringify(error));
+          Alert.alert(time.toString());
           const vels = getVelocities(time);
           const posis = getPositions(time);
           characteristic_values.current.push({
