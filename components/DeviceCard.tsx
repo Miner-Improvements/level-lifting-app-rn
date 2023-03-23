@@ -188,12 +188,14 @@ const DeviceCard = () => {
       Alert.alert("BLUETOOTH CONNECTED");
       bluetoothConnection.device!.monitorCharacteristicForService(
         SERVICE_UUID_IMU,
-        CHARACTERISTIC_UUID_TIME,
+        CHARACTERISTIC_UUID_Z_ACCEL,
         async (error, device) => {
           if (error) {
             Alert.alert(error.message, JSON.stringify(error));
             return;
           }
+
+          Alert.alert("Started interrupt");
 
           const x_acc = Buffer.from(
             (
