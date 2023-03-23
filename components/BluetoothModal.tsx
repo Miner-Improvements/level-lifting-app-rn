@@ -79,7 +79,6 @@ const BluetoothModal = () => {
                             connected: true,
                           })
                         );
-                        Alert.alert(device.serviceUUIDs!.join(","));
                         dispatch(setBluetoothModalShown(false));
                       })
                       .catch((error) => Alert.alert(error));
