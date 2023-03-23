@@ -4,13 +4,14 @@ import { persistReducer, persistStore } from "redux-persist";
 import thunk from "redux-thunk";
 import bluetoothConnectionReducer from "./reducers/bluetoothConnectionReducer";
 import bluetoothModalShownReducer from "./reducers/bluetoothModalShownReducer";
+import editModeReducer from "./reducers/editModeReducer";
 import themeReducer from "./reducers/themeReducer";
 import workoutsReducer from "./reducers/workoutsReducer";
 
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  blacklist: ["bluetoothModalShown", "bluetoothConnection"],
+  blacklist: ["bluetoothModalShown", "bluetoothConnection", "editMode"],
 };
 
 const rootReducer = combineReducers({
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   theme: themeReducer,
   bluetoothModalShown: bluetoothModalShownReducer,
   bluetoothConnection: bluetoothConnectionReducer,
+  editMode: editModeReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
