@@ -36,7 +36,7 @@ const CustomNavigationBar = ({ navigation, back }: NativeStackHeaderProps) => {
           onPress={() => dispatch(setEditMode(!editMode))}
         />
       )}
-      {editMode && (
+      {
         <Appbar.Action
           icon="plus"
           onPress={() =>
@@ -54,7 +54,7 @@ const CustomNavigationBar = ({ navigation, back }: NativeStackHeaderProps) => {
             )
           }
         />
-      )}
+      }
       {editMode && (
         <Appbar.Action icon="delete" onPress={() => setVisible(true)} />
       )}
