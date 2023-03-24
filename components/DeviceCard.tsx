@@ -185,7 +185,6 @@ const DeviceCard = () => {
 
   useEffect(() => {
     if (bluetoothConnection.connected) {
-      Alert.alert("BLUETOOTH CONNECTED");
       bluetoothConnection.device!.monitorCharacteristicForService(
         SERVICE_UUID_IMU,
         CHARACTERISTIC_UUID_Z_ACCEL,
@@ -194,8 +193,6 @@ const DeviceCard = () => {
             Alert.alert(error.message, JSON.stringify(error));
             return;
           }
-
-          Alert.alert("Started interrupt");
 
           const x_acc = Buffer.from(
             (
@@ -206,7 +203,6 @@ const DeviceCard = () => {
             ).value!,
             "base64"
           ).readFloatBE();
-          Alert.alert(x_acc.toString());
           const y_acc =
             Buffer.from(
               (
@@ -217,7 +213,6 @@ const DeviceCard = () => {
               ).value!,
               "base64"
             ).readFloatBE() + 9.8; //cancel gravity
-          Alert.alert(y_acc.toString());
           const z_acc = Buffer.from(
             (
               await bluetoothConnection.device!.readCharacteristicForService(
@@ -227,9 +222,7 @@ const DeviceCard = () => {
             ).value!,
             "base64"
           ).readFloatBE();
-          Alert.alert(z_acc.toString());
           const time = Buffer.from(device!.value!, "base64").readBigUint64BE();
-          Alert.alert(time.toString());
           const vels = getVelocities(time);
           const posis = getPositions(time);
           characteristic_values.current.push({
