@@ -37,8 +37,8 @@ const WorkoutString = ({ route }: any) => {
   const theme = useSelector((state: RootState) => state.theme);
 
   return (
-    <ScrollView>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ScrollView>
         <View
           style={{
             justifyContent: "center",
@@ -80,8 +80,8 @@ const WorkoutString = ({ route }: any) => {
         </View>
         <StatsCard workout={route.params.workout} />
         <GraphCard />
-      </GestureHandlerRootView>
-    </ScrollView>
+      </ScrollView>
+    </GestureHandlerRootView>
   );
 };
 

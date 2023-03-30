@@ -16,7 +16,7 @@ import ExpoTHREE, { Renderer } from "expo-three";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import { Card, Text } from "react-native-paper";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useRef } from "react";
+import { createRef, useRef } from "react";
 
 const GraphCard = () => {
   const boom = useRef<Group>(new Group());
