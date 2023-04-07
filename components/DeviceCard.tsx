@@ -11,6 +11,7 @@ import {
   CHARACTERISTIC_UUID_Z_ACCEL,
   SERVICE_ID,
   SERVICE_UUID_IMU,
+  TIME_DIVIDER,
 } from "../BLEManager";
 import { setBluetoothModalShown } from "../reducers/bluetoothModalShownReducer";
 import { RootState } from "../store";
@@ -241,6 +242,8 @@ const DeviceCard = () => {
           if (characteristic_values.current.length === 101) {
             characteristic_values.current.shift();
           }
+
+          Alert.alert(characteristic_values.current.toString());
 
           setCharacteristics(characteristic_values.current);
         }

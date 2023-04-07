@@ -1,7 +1,6 @@
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { Appbar, Button, Dialog, Menu, Portal, Text } from "react-native-paper";
-import AppbarAction from "react-native-paper/lib/typescript/components/Appbar/AppbarAction";
 import { useDispatch, useSelector } from "react-redux";
 import { setEditMode } from "../reducers/editModeReducer";
 import { setTheme } from "../reducers/themeReducer";

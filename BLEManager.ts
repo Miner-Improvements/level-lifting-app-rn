@@ -20,3 +20,5 @@ export const CHARACTERISTIC_UUID_Z_ACCEL =
   "aa744b51-7483-4d48-b973-df3eb0a05ff7";
 
 export const CHARACTERISTIC_UUID_TIME = "4a7c0369-4188-47f3-b1ee-82784ee99d2a";
+
+export const TIME_DIVIDER = 512;
