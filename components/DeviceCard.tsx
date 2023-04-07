@@ -188,7 +188,7 @@ const DeviceCard = () => {
     if (bluetoothConnection.connected) {
       bluetoothConnection.device!.monitorCharacteristicForService(
         SERVICE_UUID_IMU,
-        CHARACTERISTIC_UUID_Z_ACCEL,
+        CHARACTERISTIC_UUID_TIME,
         async (error, device) => {
           if (error) {
             Alert.alert(error.message, JSON.stringify(error));
