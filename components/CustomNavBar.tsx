@@ -35,25 +35,6 @@ const CustomNavigationBar = ({ navigation, back }: NativeStackHeaderProps) => {
           onPress={() => dispatch(setEditMode(!editMode))}
         />
       )}
-      {
-        <Appbar.Action
-          icon="plus"
-          onPress={() =>
-            dispatch(
-              addWorkout({
-                name: "workout 1",
-                date: new Date().toISOString(),
-                reps: 20,
-                sets: 3,
-                maxAcceleration: 33,
-                maxForce: 12,
-                balanceRating: "A",
-                avgSetDuration: 56,
-              })
-            )
-          }
-        />
-      }
       {editMode && (
         <Appbar.Action icon="delete" onPress={() => setVisible(true)} />
       )}

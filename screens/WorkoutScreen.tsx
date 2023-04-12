@@ -79,7 +79,7 @@ const WorkoutString = ({ route }: any) => {
           } ${workoutDate.getDate()}, ${workoutDate.getFullYear()}`}</Text>
         </View>
         <StatsCard workout={route.params.workout} />
-        <GraphCard />
+        <GraphCard accel_data={route.params.workout.accelerometerData} />
       </ScrollView>
     </GestureHandlerRootView>
   );

@@ -16,11 +16,14 @@ import ExpoTHREE, { Renderer } from "expo-three";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import { Card, Text } from "react-native-paper";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { createRef, useRef } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
+import { Accelerometer_Data } from "../reducers/workoutsReducer";
+import { Alert } from "react-native";
 
-const GraphCard = () => {
+const GraphCard = ({ accel_data }: { accel_data: Accelerometer_Data[] }) => {
   const boom = useRef<Group>(new Group());
   let camera = useRef<PerspectiveCamera>();
+  const spheres = useRef<Mesh[]>([]);
   const GRID_SIZE = 10;
 
   /************GRAPH RENDERING***************/
@@ -67,13 +70,12 @@ const GraphCard = () => {
     scene.add(grid_xy);
     scene.add(grid_yz);
 
-    const spheres = [];
-    for (let i = 0; i < 20; i++) {
-      spheres.push(new Mesh(geometry, material));
-      spheres[i].position.y = 10 - i * 0.5;
-      spheres[i].position.x = Math.pow((spheres[i].position.y - 5) / -3, 1 / 3);
-      spheres[i].position.z = 2.5;
-      scene.add(spheres[i]);
+    for (let i = 0; i < 100; i++) {
+      spheres.current.push(new Mesh(geometry, material));
+      scene.add(spheres.current[i]);
+      spheres.current[i].position.x = accel_data[i].x;
+      spheres.current[i].position.y = accel_data[i].y;
+      spheres.current[i].position.z = 2.5;
     }
 
     const spheres1 = [];
@@ -81,7 +83,7 @@ const GraphCard = () => {
       spheres1.push(new Mesh(geometry, material));
       spheres1[i].position.y = 10 - i * 0.5;
       spheres1[i].position.x = Math.pow(
-        (spheres[i].position.y - 5) / -3,
+        (spheres1[i].position.y - 5) / -3,
         1 / 3
       );
       spheres1[i].position.z = -2.5;

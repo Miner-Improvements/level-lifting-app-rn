@@ -1,5 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export interface Accelerometer_Data {
+  x_acc: number;
+  y_acc: number;
+  z_acc: number;
+  x_vel: number;
+  y_vel: number;
+  z_vel: number;
+  x: number;
+  y: number;
+  z: number;
+  time: number;
+}
 export interface WorkoutData {
   id?: string;
   name: string;
@@ -10,6 +22,7 @@ export interface WorkoutData {
   maxForce: number;
   balanceRating: string;
   avgSetDuration: number;
+  accelerometerData: Accelerometer_Data[];
   selected?: boolean;
 }
 
