@@ -1,15 +1,20 @@
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { useState } from "react";
-import { Appbar, Menu } from "react-native-paper";
-import AppbarAction from "react-native-paper/lib/typescript/components/Appbar/AppbarAction";
+import { Appbar, Button, Dialog, Menu, Portal, Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
+import { setEditMode } from "../reducers/editModeReducer";
 import { setTheme } from "../reducers/themeReducer";
-import { addWorkout, setWorkouts } from "../reducers/workoutsReducer";
+import {
+  addWorkout,
+  deleteSelected,
+  setWorkouts,
+} from "../reducers/workoutsReducer";
 import { RootState } from "../store";
 
 const CustomNavigationBar = ({ navigation, back }: NativeStackHeaderProps) => {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false); //delete confirmation
   const theme = useSelector((state: RootState) => state.theme);
+  const editMode = useSelector((state: RootState) => state.editMode);
   const dispatch = useDispatch();
 
   const handlePress = () => {
@@ -24,24 +29,15 @@ const CustomNavigationBar = ({ navigation, back }: NativeStackHeaderProps) => {
         size={30}
       />
       <Appbar.Content title="Level Lifting" titleStyle={{ fontFamily: "" }} />
-      <Appbar.Action
-        icon="plus"
-        onPress={() =>
-          dispatch(
-            addWorkout({
-              name: "workout 1",
-              date: new Date().toISOString(),
-              reps: 20,
-              sets: 3,
-              maxAcceleration: 33,
-              maxForce: 12,
-              balanceRating: "A",
-              avgSetDuration: 56,
-            })
-          )
-        }
-      />
-      <Appbar.Action icon="delete" onPress={() => dispatch(setWorkouts([]))} />
+      {editMode && (
+        <Appbar.Action
+          icon="close"
+          onPress={() => dispatch(setEditMode(!editMode))}
+        />
+      )}
+      {editMode && (
+        <Appbar.Action icon="delete" onPress={() => setVisible(true)} />
+      )}
       <Appbar.Action
         icon={
           theme.themeType === "light"
@@ -52,6 +48,31 @@ const CustomNavigationBar = ({ navigation, back }: NativeStackHeaderProps) => {
           dispatch(setTheme(theme.themeType === "light" ? "dark" : "light"))
         }
       />
+      <Portal>
+        <Dialog visible={visible} onDismiss={() => setVisible(false)}>
+          <Dialog.Title>Delete Workouts</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">Are you sure you sure?</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              onPress={() => {
+                setVisible(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onPress={() => {
+                dispatch(deleteSelected());
+                setVisible(false);
+              }}
+            >
+              Delete
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </Appbar.Header>
   );
 };

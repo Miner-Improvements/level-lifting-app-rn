@@ -11,7 +11,7 @@ import {
   Text,
 } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { manager, SERVICE_ID } from "../BLEManager";
+import { manager, SERVICE_ID, SERVICE_UUID_IMU } from "../BLEManager";
 import { setBluetoothConnection } from "../reducers/bluetoothConnectionReducer";
 import { setBluetoothModalShown } from "../reducers/bluetoothModalShownReducer";
 import { RootState } from "../store";
@@ -30,7 +30,7 @@ const BluetoothModal = () => {
         if (value === "PoweredOn") {
           manager.startDeviceScan(null, null, (error, device) => {
             if (error) {
-              Alert.alert(error.message);
+              Alert.alert("ERROR", error.message);
               return;
             }
 
@@ -81,7 +81,9 @@ const BluetoothModal = () => {
                         );
                         dispatch(setBluetoothModalShown(false));
                       })
-                      .catch((error) => Alert.alert(error));
+                      .catch((error) =>
+                        Alert.alert("ERROR", JSON.stringify(error))
+                      );
                   }}
                   title={item.name}
                 />

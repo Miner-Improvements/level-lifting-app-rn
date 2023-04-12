@@ -1,45 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, View } from "react-native";
-import { BleError, Characteristic } from "react-native-ble-plx";
+import { BleError, Characteristic, Service } from "react-native-ble-plx";
 import { Button, Card, IconButton, Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { CHARACTERISTIC_ID, SERVICE_ID } from "../BLEManager";
 import { setBluetoothModalShown } from "../reducers/bluetoothModalShownReducer";
 import { RootState } from "../store";
 import { Buffer } from "buffer";
+import { setBluetoothConnection } from "../reducers/bluetoothConnectionReducer";
+import GraphCard from "./GraphCard";
+import useWorkout from "../hooks/useWorkout";
+import { addWorkout } from "../reducers/workoutsReducer";
 
 const DeviceCard = () => {
   const dispatch = useDispatch();
-  const bluetoothModalShown = useSelector(
-    (state: RootState) => state.bluetoothModalShown
-  );
+  const [startWorkout, stopWorkout, workoutOngoing] = useWorkout();
   const bluetoothConnection = useSelector(
     (state: RootState) => state.bluetoothConnection
   );
-  const [characteristics, setCharacteristics] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (bluetoothConnection.connected) {
-      bluetoothConnection.device!.monitorCharacteristicForService(
-        SERVICE_ID,
-        CHARACTERISTIC_ID,
-        (error, device) => {
-          if (error) {
-            Alert.alert(error.message, JSON.stringify(error));
-            return;
-          }
-          setCharacteristics(
-            characteristics.concat(characteristics, [
-              Buffer.from(device!.value!, "base64").toString(),
-            ])
-          );
-        }
+  const stopAndSaveWorkout = async () => {
+    const accelerometerData = await stopWorkout();
+    if (accelerometerData.length > 0) {
+      dispatch(
+        addWorkout({
+          name: "workout 1",
+          date: new Date().toISOString(),
+          reps: 20,
+          sets: 3,
+          maxAcceleration: 33,
+          maxForce: 12,
+          balanceRating: "A",
+          avgSetDuration: 56,
+          accelerometerData: accelerometerData,
+        })
       );
-      // .catch((error: BleError) => {
-      //
-      // });
     }
-  }, [bluetoothConnection.connected]);
+  };
 
   return (
     <Card mode="elevated" elevation={1} style={{ margin: 10 }}>
@@ -79,7 +74,7 @@ const DeviceCard = () => {
           />
         </View>
       </View>
-      {!bluetoothConnection.connected ? (
+      {!bluetoothConnection.connected && (
         <Button
           style={{ margin: 10 }}
           mode="contained"
@@ -87,8 +82,28 @@ const DeviceCard = () => {
         >
           Connect
         </Button>
-      ) : (
-        <Text>{JSON.stringify(characteristics)}</Text>
+      )}
+      {bluetoothConnection.connected && !workoutOngoing && (
+        <Button
+          style={{ margin: 10 }}
+          mode="contained"
+          onPress={() => {
+            startWorkout();
+          }}
+        >
+          Start Workout
+        </Button>
+      )}
+      {bluetoothConnection.connected && workoutOngoing && (
+        <Button
+          style={{ margin: 10 }}
+          mode="contained"
+          onPress={() => {
+            stopAndSaveWorkout();
+          }}
+        >
+          Stop Workout
+        </Button>
       )}
     </Card>
   );

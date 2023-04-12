@@ -12,21 +12,6 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProps }) => {
   const dispatch = useDispatch();
   const workouts = useSelector((state: RootState) => state.workouts);
 
-  const handlePress = () => {
-    dispatch(
-      addWorkout({
-        name: "workout 1",
-        date: new Date().toISOString(),
-        reps: 20,
-        sets: 3,
-        maxAcceleration: 33,
-        maxForce: 12,
-        balanceRating: "A",
-        avgSetDuration: 56,
-      })
-    );
-  };
-
   return (
     <View style={{ width: "100%" }}>
       <FlatList
