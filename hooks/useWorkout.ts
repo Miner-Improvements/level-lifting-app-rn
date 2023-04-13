@@ -4,7 +4,7 @@ import { Characteristic, Device, Subscription } from "react-native-ble-plx";
 import { useDispatch, useSelector } from "react-redux";
 import {
   SERVICE_UUID_IMU,
-  CHARACTERISTIC_UUID_Z_ACCEL,
+  CHARACTERISTIC_UUID_ACCEL,
   CHARACTERISTIC_UUID_TX,
   SERVICE_ID,
   CHARACTERISTIC_UUID_RX,
@@ -43,6 +43,8 @@ const getPositions = (data: Accelerometer_Data[], time: number) => {
     ];
   }
 };
+
+export const WORKOUT_DATA_LENGTH = 30000;
 
 //description: this hook is used to start and stop a workout and to get the data from the workout
 //parameters: none
@@ -138,7 +140,7 @@ const useWorkout: () => [
       setWorkoutDataSubscription(
         bluetoothConnection.device.monitorCharacteristicForService(
           SERVICE_UUID_IMU,
-          CHARACTERISTIC_UUID_Z_ACCEL,
+          CHARACTERISTIC_UUID_ACCEL,
           async (error, device) => {
             //errorCode 2 is for subscription cancelled, which we expect when we stop the workout
             if (error) {
@@ -167,7 +169,7 @@ const useWorkout: () => [
               time: time,
             });
 
-            if (workout_data.current.length === 101) {
+            if (workout_data.current.length === WORKOUT_DATA_LENGTH + 1) {
               workout_data.current.shift();
             }
           }

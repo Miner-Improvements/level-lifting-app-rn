@@ -19,6 +19,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { createRef, useEffect, useRef, useState } from "react";
 import { Accelerometer_Data } from "../reducers/workoutsReducer";
 import { Alert } from "react-native";
+import { WORKOUT_DATA_LENGTH } from "../hooks/useWorkout";
 
 const GraphCard = ({ accel_data }: { accel_data: Accelerometer_Data[] }) => {
   const boom = useRef<Group>(new Group());
@@ -69,12 +70,13 @@ const GraphCard = ({ accel_data }: { accel_data: Accelerometer_Data[] }) => {
     scene.add(grid_xz);
     scene.add(grid_xy);
     scene.add(grid_yz);
-
     for (let i = 0; i < 100; i++) {
       spheres.current.push(new Mesh(geometry, material));
       scene.add(spheres.current[i]);
-      spheres.current[i].position.x = accel_data[i].x;
-      spheres.current[i].position.y = accel_data[i].y;
+      spheres.current[i].position.x =
+        accel_data[Math.floor(i * (accel_data.length / 100))].x;
+      spheres.current[i].position.y =
+        accel_data[Math.floor(i * (accel_data.length / 100))].y;
       spheres.current[i].position.z = 2.5;
     }
 
