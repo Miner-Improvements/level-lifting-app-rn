@@ -10,10 +10,12 @@ import { setBluetoothConnection } from "../reducers/bluetoothConnectionReducer";
 import GraphCard from "./GraphCard";
 import useWorkout from "../hooks/useWorkout";
 import { addWorkout } from "../reducers/workoutsReducer";
+import WorkoutLiveModal from "./WorkoutLiveModal";
 
 const DeviceCard = () => {
   const dispatch = useDispatch();
   const [startWorkout, stopWorkout, workoutOngoing] = useWorkout();
+  const [workoutLiveModal, setWorkoutLiveModal] = useState(true);
   const bluetoothConnection = useSelector(
     (state: RootState) => state.bluetoothConnection
   );
@@ -35,6 +37,12 @@ const DeviceCard = () => {
       );
     }
   };
+
+  useEffect(() => {
+    if (bluetoothConnection.connected && workoutOngoing)
+      setWorkoutLiveModal(true);
+    else setWorkoutLiveModal(false);
+  }, [bluetoothConnection.connected, workoutOngoing]);
 
   return (
     <Card mode="elevated" elevation={1} style={{ margin: 10 }}>
@@ -94,17 +102,12 @@ const DeviceCard = () => {
           Start Workout
         </Button>
       )}
-      {bluetoothConnection.connected && workoutOngoing && (
-        <Button
-          style={{ margin: 10 }}
-          mode="contained"
-          onPress={() => {
-            stopAndSaveWorkout();
-          }}
-        >
-          Stop Workout
-        </Button>
-      )}
+
+      <WorkoutLiveModal
+        visible={workoutLiveModal}
+        setVisible={setWorkoutLiveModal}
+        stopWorkout={stopAndSaveWorkout}
+      />
     </Card>
   );
 };
