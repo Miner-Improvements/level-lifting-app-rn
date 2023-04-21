@@ -24,7 +24,6 @@ const DeviceCard = () => {
     if (accelerometerData.length > 0) {
       dispatch(
         addWorkout({
-          name: "workout 1",
           date: new Date().toISOString(),
           reps: 20,
           sets: 3,

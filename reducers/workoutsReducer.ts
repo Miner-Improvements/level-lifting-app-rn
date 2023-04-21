@@ -14,7 +14,7 @@ export interface Accelerometer_Data {
 }
 export interface WorkoutData {
   id?: string;
-  name: string;
+  name?: string;
   date: string;
   reps: number;
   sets: number;
@@ -36,6 +36,7 @@ const workoutsSlice = createSlice({
     addWorkout(state, action: PayloadAction<WorkoutData>) {
       state.push({
         ...action.payload,
+        name: action.payload.name ?? `Workout ${state.length + 1}`,
         id:
           action.payload.id ??
           Math.random().toString(36).substr(2) + Date.now().toString(36),

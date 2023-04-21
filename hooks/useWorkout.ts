@@ -148,10 +148,24 @@ const useWorkout: () => [
                 Alert.alert("ERROR", JSON.stringify(error));
               return;
             }
-            const x_acc = Buffer.from(device!.value!, "base64").readFloatLE();
-            const y_acc = Buffer.from(device!.value!, "base64").readFloatLE(4); //cancel gravity
-            const z_acc =
-              Buffer.from(device!.value!, "base64").readFloatLE(8) - 9.8;
+            let x_acc, y_acc, z_acc;
+            if (workout_data.current.length == 0) {
+              x_acc = Buffer.from(device!.value!, "base64").readFloatLE();
+              y_acc = Buffer.from(device!.value!, "base64").readFloatLE(4);
+              z_acc =
+                Buffer.from(device!.value!, "base64").readFloatLE(8) - 9.8;
+            } else {
+              x_acc =
+                Buffer.from(device!.value!, "base64").readFloatLE() -
+                workout_data.current[0].x_acc;
+              y_acc =
+                Buffer.from(device!.value!, "base64").readFloatLE(4) -
+                workout_data.current[0].y_acc; //cancel gravity
+              z_acc =
+                Buffer.from(device!.value!, "base64").readFloatLE(8) -
+                9.8 -
+                workout_data.current[0].z_acc;
+            }
             const time =
               Buffer.from(device!.value!, "base64").readUInt32LE(12) / 40000000;
             const vels = getVelocities(workout_data.current, time);
