@@ -14,4 +14,4 @@ export const CHARACTERISTIC_UUID_ANGULAR =
   "694b27b3-7c84-4a7e-a58c-baf08b34cc0c";
 export const CHARACTERISTIC_UUID_ACCEL = "aa744b51-7483-4d48-b973-df3eb0a05ff7";
 
-export const TIME_DIVIDER = 512;
+export const TIME_DIVIDER = 1000000; // convert us to s

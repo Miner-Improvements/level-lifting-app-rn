@@ -8,6 +8,7 @@ import {
   CHARACTERISTIC_UUID_TX,
   SERVICE_ID,
   CHARACTERISTIC_UUID_RX,
+  TIME_DIVIDER,
 } from "../BLEManager";
 import { setBluetoothConnection } from "../reducers/bluetoothConnectionReducer";
 import { Accelerometer_Data } from "../reducers/workoutsReducer";
@@ -152,22 +153,15 @@ const useWorkout: () => [
             if (workout_data.current.length == 0) {
               x_acc = Buffer.from(device!.value!, "base64").readFloatLE();
               y_acc = Buffer.from(device!.value!, "base64").readFloatLE(4);
-              z_acc =
-                Buffer.from(device!.value!, "base64").readFloatLE(8) - 9.8;
+              z_acc = Buffer.from(device!.value!, "base64").readFloatLE(8);
             } else {
-              x_acc =
-                Buffer.from(device!.value!, "base64").readFloatLE() -
-                workout_data.current[0].x_acc;
-              y_acc =
-                Buffer.from(device!.value!, "base64").readFloatLE(4) -
-                workout_data.current[0].y_acc; //cancel gravity
-              z_acc =
-                Buffer.from(device!.value!, "base64").readFloatLE(8) -
-                9.8 -
-                workout_data.current[0].z_acc;
+              x_acc = Buffer.from(device!.value!, "base64").readFloatLE();
+              y_acc = Buffer.from(device!.value!, "base64").readFloatLE(4);
+              z_acc = Buffer.from(device!.value!, "base64").readFloatLE(8);
             }
             const time =
-              Buffer.from(device!.value!, "base64").readUInt32LE(12) / 40000000;
+              Buffer.from(device!.value!, "base64").readUInt32LE(12) /
+              TIME_DIVIDER;
             const vels = getVelocities(workout_data.current, time);
             const posis = getPositions(workout_data.current, time);
             workout_data.current.push({
