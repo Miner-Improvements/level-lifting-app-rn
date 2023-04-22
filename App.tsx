@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { Subscription } from "react-native-ble-plx";
 import { setConnected } from "./reducers/bluetoothConnectionReducer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import DataScreen from "./screens/DataScreen";
 
 type RootStackParamList = {
   Home: undefined;
@@ -62,6 +63,11 @@ const UI = () => {
             name="Workout"
             component={WorkoutScreen}
             options={{ animation: "slide_from_right", title: "Workout" }}
+          />
+          <Stack.Screen
+            name="Data"
+            component={DataScreen}
+            options={{ animation: "slide_from_right", title: "Workout Data" }}
           />
         </Stack.Navigator>
       </NavigationContainer>

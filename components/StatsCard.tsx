@@ -1,14 +1,36 @@
 import { View } from "react-native";
-import { Card, Divider } from "react-native-paper";
+import { Card, Divider, IconButton } from "react-native-paper";
 import { WorkoutData } from "../reducers/workoutsReducer";
+import { useNavigation } from "@react-navigation/native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 const StatsCard = ({ workout }: { workout: WorkoutData }) => {
+  const nav = useNavigation<any>();
+
+  const buttonTap = Gesture.Tap().onBegin((e) => {
+    nav.navigate("Data", {
+      workout: workout,
+    });
+    console.log("Pressed");
+  });
+
   return (
     <Card
       mode="elevated"
       elevation={2}
       style={{ marginVertical: 2, marginHorizontal: 10 }}
+      onPress={() => {
+        nav.navigate("Data", {
+          workout: workout,
+        });
+        console.log("Pressed");
+      }}
     >
+      <IconButton
+        icon="information-outline"
+        style={{ position: "absolute", top: 2.5, right: 2.5 }}
+        size={20}
+      />
       <View
         style={{
           flexDirection: "row",

@@ -163,9 +163,9 @@ const GraphCard = ({ accel_data }: { accel_data: Accelerometer_Data[] }) => {
       spheres.current[i].position.x =
         accel_data[Math.floor(i * (accel_data.length / 100))].x;
       spheres.current[i].position.y =
-        accel_data[Math.floor(i * (accel_data.length / 100))].z;
-      spheres.current[i].position.z =
         accel_data[Math.floor(i * (accel_data.length / 100))].y;
+      spheres.current[i].position.z =
+        accel_data[Math.floor(i * (accel_data.length / 100))].z;
       spheres.current[i].visible = false;
     }
     setPercentageOfVisibleSpheres(0, INITIAL_TIME_PROGRESS);
