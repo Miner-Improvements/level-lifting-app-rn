@@ -20,7 +20,8 @@ const DeviceCard = () => {
     (state: RootState) => state.bluetoothConnection
   );
   const stopAndSaveWorkout = async () => {
-    const accelerometerData = await stopWorkout();
+    let accelerometerData = await stopWorkout();
+    accelerometerData = accelerometerData.sort((a, b) => a.time - b.time);
     if (accelerometerData.length > 0) {
       dispatch(
         addWorkout({
