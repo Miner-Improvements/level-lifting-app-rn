@@ -15,7 +15,7 @@ import { Accelerometer_Data } from "../reducers/workoutsReducer";
 import { RootState } from "../store";
 import { Buffer } from "buffer";
 
-export const getVelocities = (data: Accelerometer_Data[], time: number) => {
+const getVelocities = (data: Accelerometer_Data[], time: number) => {
   if (data.length == 0) return [0, 0, 0];
   else {
     const last_vals = data[data.length - 1];
@@ -27,48 +27,10 @@ export const getVelocities = (data: Accelerometer_Data[], time: number) => {
   }
 };
 
-export const getVelocitiesIndex = (
-  data: Accelerometer_Data[],
-  index: number,
-  time: number
-) => {
-  if (index == 0) return [0, 0, 0];
-  else {
-    const last_vals = data[index - 1];
-    return [
-      last_vals.x_vel + last_vals.x_acc * (time - last_vals.time),
-      last_vals.y_vel + last_vals.y_acc * (time - last_vals.time),
-      last_vals.z_vel + last_vals.z_acc * (time - last_vals.time),
-    ];
-  }
-};
-
-export const getPositions = (data: Accelerometer_Data[], time: number) => {
+const getPositions = (data: Accelerometer_Data[], time: number) => {
   if (data.length == 0) return [0, 0, 0];
   else {
     const last_vals = data[data.length - 1];
-    return [
-      last_vals.x +
-        last_vals.x_vel * (time - last_vals.time) +
-        last_vals.x_acc * Math.pow(time - last_vals.time, 2),
-      last_vals.y +
-        last_vals.y_vel * (time - last_vals.time) +
-        last_vals.y_acc * Math.pow(time - last_vals.time, 2),
-      last_vals.z +
-        last_vals.z_vel * (time - last_vals.time) +
-        last_vals.z_acc * Math.pow(time - last_vals.time, 2),
-    ];
-  }
-};
-
-export const getPositionsIndex = (
-  data: Accelerometer_Data[],
-  index: number,
-  time: number
-) => {
-  if (index == 0) return [0, 0, 0];
-  else {
-    const last_vals = data[index - 1];
     return [
       last_vals.x +
         last_vals.x_vel * (time - last_vals.time) +
@@ -200,16 +162,18 @@ const useWorkout: () => [
             const time =
               Buffer.from(device!.value!, "base64").readUInt32LE(12) /
               TIME_DIVIDER;
+            const vels = getVelocities(workout_data.current, time);
+            const posis = getPositions(workout_data.current, time);
             workout_data.current.push({
               x_acc: x_acc,
               y_acc: y_acc,
               z_acc: z_acc,
-              x_vel: 0,
-              y_vel: 0,
-              z_vel: 0,
-              x: 0,
-              y: 0,
-              z: 0,
+              x_vel: vels[0],
+              y_vel: vels[1],
+              z_vel: vels[2],
+              x: posis[0],
+              y: posis[1],
+              z: posis[2],
               time: time,
             });
 

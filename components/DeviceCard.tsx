@@ -8,10 +8,7 @@ import { RootState } from "../store";
 import { Buffer } from "buffer";
 import { setBluetoothConnection } from "../reducers/bluetoothConnectionReducer";
 import GraphCard from "./GraphCard";
-import useWorkout, {
-  getPositionsIndex,
-  getVelocitiesIndex,
-} from "../hooks/useWorkout";
+import useWorkout from "../hooks/useWorkout";
 import { addWorkout } from "../reducers/workoutsReducer";
 import WorkoutLiveModal from "./WorkoutLiveModal";
 
@@ -23,19 +20,7 @@ const DeviceCard = () => {
     (state: RootState) => state.bluetoothConnection
   );
   const stopAndSaveWorkout = async () => {
-    let accelerometerData = await stopWorkout();
-    accelerometerData.sort((a, b) => a.time - b.time);
-    accelerometerData.forEach((data, index, arr) => {
-      const velocities = getVelocitiesIndex(arr, index, data.time);
-      const positions = getPositionsIndex(arr, index, data.time);
-      data.x_vel = velocities[0];
-      data.y_vel = velocities[1];
-      data.z_vel = velocities[2];
-      data.x = positions[0];
-      data.y = positions[1];
-      data.z = positions[2];
-    });
-
+    const accelerometerData = await stopWorkout();
     if (accelerometerData.length > 0) {
       dispatch(
         addWorkout({
