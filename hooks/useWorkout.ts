@@ -150,15 +150,13 @@ const useWorkout: () => [
               return;
             }
             let x_acc, y_acc, z_acc;
-            if (workout_data.current.length == 0) {
-              x_acc = Buffer.from(device!.value!, "base64").readFloatLE();
-              y_acc = Buffer.from(device!.value!, "base64").readFloatLE(4);
-              z_acc = Buffer.from(device!.value!, "base64").readFloatLE(8);
-            } else {
-              x_acc = Buffer.from(device!.value!, "base64").readFloatLE();
-              y_acc = Buffer.from(device!.value!, "base64").readFloatLE(4);
-              z_acc = Buffer.from(device!.value!, "base64").readFloatLE(8);
-            }
+            x_acc = Buffer.from(device!.value!, "base64").readFloatLE();
+            y_acc = Buffer.from(device!.value!, "base64").readFloatLE(4);
+            z_acc = Buffer.from(device!.value!, "base64").readFloatLE(8);
+
+            if (Math.abs(x_acc) < 0.05) x_acc = 0;
+            if (Math.abs(y_acc) < 0.05) y_acc = 0;
+            if (Math.abs(z_acc) < 0.05) z_acc = 0;
             const time =
               Buffer.from(device!.value!, "base64").readUInt32LE(12) /
               TIME_DIVIDER;

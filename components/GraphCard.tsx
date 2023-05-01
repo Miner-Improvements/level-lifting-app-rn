@@ -161,26 +161,14 @@ const GraphCard = ({ accel_data }: { accel_data: Accelerometer_Data[] }) => {
       scene.add(spheres.current[i]);
 
       spheres.current[i].position.x =
-        accel_data[Math.floor(i * (accel_data.length / 100))].x;
+        accel_data[Math.floor(i * (accel_data.length / 100))].x * 5;
       spheres.current[i].position.y =
-        accel_data[Math.floor(i * (accel_data.length / 100))].y;
+        accel_data[Math.floor(i * (accel_data.length / 100))].y * 5;
       spheres.current[i].position.z =
-        accel_data[Math.floor(i * (accel_data.length / 100))].z;
+        accel_data[Math.floor(i * (accel_data.length / 100))].z * 5;
       spheres.current[i].visible = false;
     }
     setPercentageOfVisibleSpheres(0, INITIAL_TIME_PROGRESS);
-
-    const spheres1 = [];
-    for (let i = 0; i < 20; i++) {
-      spheres1.push(new Mesh(geometry, material));
-      spheres1[i].position.y = 10 - i * 0.5;
-      spheres1[i].position.x = Math.pow(
-        (spheres1[i].position.y - 5) / -3,
-        1 / 3
-      );
-      spheres1[i].position.z = -2.5;
-      scene.add(spheres1[i]);
-    }
 
     grid_xz.position.x += GRID_SIZE / 2;
     grid_xz.position.y += GRID_SIZE / 2;
